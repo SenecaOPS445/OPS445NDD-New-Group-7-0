@@ -29,10 +29,61 @@ def get_network_config():
         print(f"Error fetching network configuration")
         sys.exit(1)
 
+def changing_ip():
+    '''work here for the function that helps in changing the ip configuration'''
+
+'''Creating a simple backup of /etc as a tar.gz file'''
+
 import os
 import shutil
-from datetime import datetime
+import time
 
+def backup_config():
+
+    '''creating a timestamp for backup file.'''
+    backup_name = f"backup_{time.strftime('%Y%m%d_%H%M%S')}.tar.gz" 
+
+    '''Making sure the backups/ folder do exist'''
+    if not os.path.exists ("backups"):
+        os.mkdir("backups")
+    
+    '''Creating the backup inside backups/ folder'''
+    try:
+        shutil.make_archive(f"backups/{backup_name.replace('.tar.gz','')}", 'gztar','/etc')
+        print(f"Backup created in backups/{backup_name}")
+    except Exception as e:
+        print(f"Backup failed {e}")
+
+import argparse
 
 if __name__ == "__main__":
-    get_network_config()
+    '''Creatin an ArgumentParser object to handle command-line options like --show and --backup'''
+    parser = argparse.ArgumentParser(description="Network configuration and Backup tool")
+
+    '''Adding --show option: If it is used, it will trigger the function to display network config'''
+    parser.add_argument('--show', action='store_true', help="Show current network configuration")
+
+    '''Adding --backup option: If it is used, it will trigger the function to back up /etc'''
+    parser.add_argument('--backup', action='store_true', help="Create a backup of the system config")
+
+    '''Adding --ip and --subnet: If it is used it will trigger the function to change ip and subnet'''
+    parser.add_argument('--ip', type=str, help="Provide a new static IP address")
+    parser.add_argument('--subnet', type=str, help="Provide a subnet mask (optional)")
+
+
+    '''Parsing the arguments provided when the script is to be ran'''
+    args = parser.parse_args()
+
+    '''Callin network config function'''
+    if args.show:
+        get_network_config()
+
+    '''Calling the backup function'''
+    if args.backup:
+        backup_config()
+
+    '''If changing the ip, back up first'''
+    if args.ip or args.subnet:
+        backup_config()
+        
+        # Placeholder — add static IP logic here later

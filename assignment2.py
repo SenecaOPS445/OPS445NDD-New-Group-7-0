@@ -40,8 +40,28 @@ def get_network_config():
         sys.exit(1)
 
 
-def changing_ip():
-    '''work here for the function that helps in changing the ip configuration'''
+def changing_ip(ip_address, subnet_mask="24"):
+    """Apply a new static IP address configuration"""
+    interface = "ens33"  # Default interface (adjust if needed)
+
+    # Combine IP and subnet
+    cidr = f"{ip_address}/{subnet_mask}"
+
+    try:
+        # Remove current IP address from interface (optional, depending on use case)
+        subprocess.run(['ip', 'addr', 'flush', 'dev', interface], check=True)
+
+        # Assign new IP address
+        subprocess.run(['ip', 'addr', 'add', cidr, 'dev', interface], check=True)
+
+        # Bring the interface up
+        subprocess.run(['ip', 'link', 'set', interface, 'up'], check=True)
+
+        print(f"Successfully changed IP of {interface} to {cidr}")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to apply static IP: {e}")
+        sys.exit(1)
 
 '''Creating a simple backup of /etc as a tar.gz file'''
 
@@ -99,6 +119,8 @@ if __name__ == "__main__":
     '''If changing the ip, back up first'''
     if args.ip or args.subnet:
         backup_config()
+        changing_ip(args.ip, args.subnet if args.subnet else "24")
+
         
-        # Placeholder — add static IP logic here later
+       
 

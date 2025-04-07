@@ -1,13 +1,13 @@
-# Winter 2025 Assignment 2
+## Winter 2025 Assignment 2
 
-## Group Information
+### Group Information
 
 Hi, this is **Group 7**, with three members:
     -Manik Shrestha
     -Samir Shrestha
     -Tanuj Gupta
 
-# Title: Network Configuration and Subnetting
+### Title: Network Configuration and Subnetting
 
 This is a Python-based project which focuses on configuring and analyzing network settings, validating subnets, and assisting with IP allocation on a Linux Machine. It is designed for use in virtual environments where users may want to inspect, modify, or back up networking settings through a script.
 
@@ -78,11 +78,11 @@ To ensure these operations succeed without permission issues, the script must be
 
 If the script is not executed with the required privileges, it will display an error and exit.
 # example usage:
-     sudo python3 ./assignment2.py
+     sudo python3 ./assignment2.py --show
 
 ##  Git Usage & Collaboration
 
-- All members contribute through personal branches (`manik`, `samir`, `tgupta25`)
+- All members contribute through personal branches (`mshrestha8`, `tgupta25`)
 - Merges into `main` are only allowed via Pull Requests
 - Git commits use each member’s `myseneca.ca` email for grading
 

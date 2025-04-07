@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+<<<<<<< HEAD
 
 import subprocess
 import sys
@@ -33,3 +34,5 @@ def get_network_config():
 
 if __name__ == "__main__":
     get_network_config()
+=======
+>>>>>>> main

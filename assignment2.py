@@ -2,10 +2,19 @@
 
 import subprocess
 import sys
+import os
+
+def root_check():
+    """asks user to be a root to run the script"""
+    if os.geteuid() != 0: #Checks if the script is run as a root.
+        print("The script must be run only with superuser previligiess. Use 'sudo' to run it.")
+        sys.exit(1)
+
 
 def get_network_config():
     """ Display the current network configuration."""
-    try:
+    try: 
+        #runs 'ip a' command to get network interface details 
         result = subprocess.run(['ip', 'a'], capture_output=True, text=True, check=True)
         lines = result.stdout.splitlines()
 
@@ -26,8 +35,10 @@ def get_network_config():
 
 
     except subprocess.CalledProcessError:
+        #Incase of 'ip a' command fails
         print(f"Error fetching network configuration")
         sys.exit(1)
+
 
 def changing_ip():
     '''work here for the function that helps in changing the ip configuration'''
@@ -57,6 +68,9 @@ def backup_config():
 import argparse
 
 if __name__ == "__main__":
+
+    root_check()
+
     '''Creatin an ArgumentParser object to handle command-line options like --show and --backup'''
     parser = argparse.ArgumentParser(description="Network configuration and Backup tool")
 
@@ -87,3 +101,4 @@ if __name__ == "__main__":
         backup_config()
         
         # Placeholder — add static IP logic here later
+

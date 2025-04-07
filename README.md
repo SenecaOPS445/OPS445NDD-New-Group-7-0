@@ -71,6 +71,15 @@ It does **not** rely on third-party modules. Only standard Python libraries such
 
 ---
 
+## Root Privileges Required
+This script requires superuser (root) privileges to execute properly. It performs system-level operations such as reading and modifying network configurations, validating IP settings, and backing up system files.
+
+To ensure these operations succeed without permission issues, the script must be run with sudo.
+
+If the script is not executed with the required privileges, it will display an error and exit.
+# example usage:
+     sudo python3 ./assignment2.py
+
 ##  Git Usage & Collaboration
 
 - All members contribute through personal branches (`manik`, `samir`, `tgupta25`)

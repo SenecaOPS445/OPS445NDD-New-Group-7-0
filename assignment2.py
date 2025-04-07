@@ -29,6 +29,9 @@ def get_network_config():
         print(f"Error fetching network configuration")
         sys.exit(1)
 
+import os
+import shutil
+from datetime import datetime
 
 
 if __name__ == "__main__":

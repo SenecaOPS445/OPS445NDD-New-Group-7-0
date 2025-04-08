@@ -62,6 +62,7 @@ def get_default_interface():
         
 def validate_ip(ip_address):
     """Validate the format of the provided IP address."""
+    ip_address = ip_address.strip() #removes any extra whitespace
     parts = ip_address.split(".")
     #checks if there are exactly 4 parts
     if len(parts) != 4:
@@ -74,12 +75,24 @@ def validate_ip(ip_address):
         #checks if the number is between 0 and 255
         if int(part) < 0 or int(part) > 255:
             return False
+    return True #returns true when IP is valid
+
+def validate_interface(interface):
+    """Check if the provided network interface exists and is valid."""
+    try:
+        #runs the 'ip link show' command to check the interface's status
+        result = subprocess.run(['ip', 'link', 'show', interface], capture_output=True, text=True)
+        
+        #checks if the word 'state' appears in the result (indicating interface status)
+        if 'state' in result.stdout:
+            return True  # Interface exists and is valid
+    except subprocess.CalledProcessError:
+        # If there's an error (interface doesn't exist), return False
+        return False
+    return False
         
 def changing_ip(ip_address, subnet_mask="24", interface=None):
     """Apply a new static IP address configuration"""
-    #validate the provided IP address format
-    if not validate_ip(ip_address):
-        print("Invalid IP address format. Please provide a vlid IP address.")
         
     #use the default interface if not provided
     if interface is None:
@@ -169,11 +182,18 @@ if __name__ == "__main__":
             #before asking for interface name it shows the current network configuration 
             get_network_config()
             
-            #Ask for interface name
+            #Ask for interface name and also validates the interface
             interface = input("Enterthe interface name (e.g. ens33, ens160): ").strip()
+            if not validate_interface(interface):
+                print(f"Invalid interface name: {interface}. Please provide a valid network interface.")
+                sys.exit(1)
         
-            #Asks for IP address and subnet
+            #Asks for IP address and subnet also validate ip format 
             ip_address = input("Enter the new static IP address: ").strip()
+            if not validate_ip(ip_address):
+                print("Invalid IP address format. Please provide a valid IP address.")
+                sys.exit(1)
+            
             subnet_mask = input("Enter the subnet mask (default is 24): ").strip() or "24"
         
             #Backup before making changes

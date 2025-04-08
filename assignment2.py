@@ -60,11 +60,31 @@ def get_default_interface():
         print("Could not detect a valid network interface.")
         sys.exit(1)
         
+def validate_ip(ip_address):
+    """Validate the format of the provided IP address."""
+    parts = ip_address.split(".")
+    #checks if there are exactly 4 parts
+    if len(parts) != 4:
+        return False
+
+    for part in parts:
+        #checks if the part is empty or contains non-numeric characters
+        if not part or any(char not in '0123456789' for char in part):
+            return False
+        #checks if the number is between 0 and 255
+        if int(part) < 0 or int(part) > 255:
+            return False
+        
 def changing_ip(ip_address, subnet_mask="24", interface=None):
     """Apply a new static IP address configuration"""
+    #validate the provided IP address format
+    if not validate_ip(ip_address):
+        print("Invalid IP address format. Please provide a vlid IP address.")
+        
     #use the default interface if not provided
     if interface is None:
         interface = get_default_interface()
+        
     # Combine IP and subnet
     cidr = f"{ip_address}/{subnet_mask}"
 

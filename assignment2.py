@@ -38,28 +38,6 @@ def get_network_config():
         #Incase of 'ip a' command fails
         print(f"Error fetching network configuration")
         sys.exit(1)
-
-def changing_ip(ip_address, subnet_mask="24", interface=None):
-    """Apply a new static IP address configuration"""
-
-    # Combine IP and subnet
-    cidr = f"{ip_address}/{subnet_mask}"
-
-    try:
-        # Remove current IP address from interface (optional, depending on use case)
-        subprocess.run(['ip', 'addr', 'flush', 'dev', interface], check=True)
-
-        # Assign new IP address
-        subprocess.run(['ip', 'addr', 'add', cidr, 'dev', interface], check=True)
-
-        # Bring the interface up
-        subprocess.run(['ip', 'link', 'set', interface, 'up'], check=True)
-
-        print(f"Successfully changed IP of {interface} to {cidr}")
-
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to apply static IP: {e}")
-        sys.exit(1)
         
 def get_default_interface():
     """Finds and returns the first active network interface ."""
@@ -81,6 +59,31 @@ def get_default_interface():
     except subprocess.CalledProcessError: #if any error detects prints the error message and exits.
         print("Could not detect a valid network interface.")
         sys.exit(1)
+        
+def changing_ip(ip_address, subnet_mask="24", interface=None):
+    """Apply a new static IP address configuration"""
+    #use the default interface if not provided
+    if interface is None:
+        interface = get_default_interface()
+    # Combine IP and subnet
+    cidr = f"{ip_address}/{subnet_mask}"
+
+    try:
+        # Remove current IP address from interface (optional, depending on use case)
+        subprocess.run(['ip', 'addr', 'flush', 'dev', interface], check=True)
+
+        # Assign new IP address
+        subprocess.run(['ip', 'addr', 'add', cidr, 'dev', interface], check=True)
+
+        # Bring the interface up
+        subprocess.run(['ip', 'link', 'set', interface, 'up'], check=True)
+
+        print(f"Successfully changed IP of {interface} to {cidr}")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to apply static IP: {e}")
+        sys.exit(1)
+        
 '''Creating a simple backup of /etc as a tar.gz file'''
 
 import shutil
@@ -143,6 +146,9 @@ if __name__ == "__main__":
         change_ip = input("Do you want to change the IP to static? (yes/no): ").strip().lower()
         
         if change_ip == 'yes':
+            #before asking for interface name it shows the current network configuration 
+            get_network_config()
+            
             #Ask for interface name
             interface = input("Enterthe interface name (e.g. ens33, ens160): ").strip()
         
